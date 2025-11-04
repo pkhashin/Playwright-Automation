@@ -1,4 +1,5 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 
 
@@ -10,6 +11,7 @@ export class LoginPage {
     readonly signupNameInput: Locator;
     readonly sigupEmail: Locator;
     readonly btnSignup: Locator;
+    readonly invalidUserErrorText: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -17,8 +19,9 @@ export class LoginPage {
         this.passwordInput = page.locator("//input[@name='password']");
         this.loginButton = page.locator("//button[text()='Login']");
         this.signupNameInput = page.locator("//input[@name='name']");
-        this.sigupEmail= page.locator("//input[@data-qa='signup-email']");
-        this.btnSignup= page.locator("//button[normalize-space()='Signup']");
+        this.sigupEmail = page.locator("//input[@data-qa='signup-email']");
+        this.btnSignup = page.locator("//button[normalize-space()='Signup']");
+        this.invalidUserErrorText = page.locator("//form[@action='/login']//p");
 
     }
 
@@ -36,19 +39,32 @@ export class LoginPage {
         console.log('Login button clicked');
     }
 
-    async enterSignupName(name: string) {
-        await this.signupNameInput.fill(name);
-        console.log('Signup email entered : ' + name);
+    async enterSignupName() {
+        const signUpName=faker.person.firstName();
+
+        await this.signupNameInput.fill(signUpName);
+        console.log('Signup name entered : ' + signUpName);
     }
 
-    async enterSignupEmail(email: string) {
-        await this.sigupEmail.fill(email);
-        console.log('Signup name entered : ' + email);
+    async enterSignupEmail() {
+        const signUpEmail=faker.internet.email();
+        await this.sigupEmail.fill(signUpEmail);
+        console.log('Signup email entered : ' + signUpEmail);
     }
-      
+
     async clickSignupButton() {
         await this.btnSignup.click();
         console.log('Signup button clicked');
+    }
+
+    async verifyInvalidUserErrorText(expectedText: string) {
+        const actualText = await this.page.locator("//form[@action='/login']//p").textContent();
+    }
+
+    async getInvalidUserErrorText(expectedText: string) {
+        const actualerrorText = await this.invalidUserErrorText;
+        await expect(actualerrorText).toHaveText(expectedText);
+
     }
 
 

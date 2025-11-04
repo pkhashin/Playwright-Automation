@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 export class RegisterPage {
@@ -18,6 +18,11 @@ export class RegisterPage {
     readonly chkSignupNewsletter: Locator;
     readonly chkReceiveOffers: Locator;
     readonly password: Locator;
+    readonly txtAccountCreated: Locator;
+    readonly btnContinue: Locator;
+    readonly linkDeleteAccount: Locator;
+    readonly txtAccountDeleted: Locator;   
+
 
     constructor(page: Page) {
         this.page = page;
@@ -36,35 +41,34 @@ export class RegisterPage {
         this.hdrEnterAccountInformation = page.locator("//b[contains(text(),'Enter Account Information')]");
         this.chkSignupNewsletter = page.locator("//input[@type='checkbox' and @id='newsletter']");
         this.chkReceiveOffers = page.locator("//input[@type='checkbox' and @id='optin']");
+        this.txtAccountCreated = page.locator("//h2/b[contains(text(),'Account Created!')]");
+        this.btnContinue = page.locator("//a[@data-qa='continue-button']");
+        this.linkDeleteAccount = page.locator("//a[normalize-space(text())='Delete Account']");
+        this.txtAccountDeleted=page.locator("//b[contains(text(),'Account Deleted!')]");
+
     }
-  
+
     async enterPassword(pwd: string) {
         await this.password.fill(pwd);
     }
 
-    async regsiterNewUser() {
+    async fillUserDetailsForm() {
 
-        const lname  = faker.person.lastName();
-        const fname  = faker.person.firstName();
-        const phone= faker.phone.number('91##########' as any);
-        const address= faker.location.streetAddress();
-        const state= faker.location.state();
-        const city= faker.location.city();
-        const zipcode= faker.location.zipCode('#####');     
+        const lname = faker.person.lastName();
+        const fname = faker.person.firstName();
+        const phone = faker.phone.number('91##########' as any);
+
 
 
         await this.txtFirstName.fill(fname);
         await this.txtLastName.fill(lname);
         await this.password.fill('Test@12345');
         await this.enterdateofBirth();
-        await this.txtAddress.fill(address);
-        await this.txtState.fill(state);
-        await this.txtCity.fill(city);
-        await this.txtZipcode.fill(zipcode);
+        await this.enterAddressDetails();
         await this.txtMobileNumber.fill(phone);
         await this.chkSignupNewsletter.check();
         await this.chkReceiveOffers.check();
-        await this.btnSubmit.click();
+
     }
 
     async enterdateofBirth() {
@@ -77,4 +81,49 @@ export class RegisterPage {
         await this.ddYear.selectOption(year);
     }
 
+    async enterAddressDetails() {
+
+        const address = faker.location.streetAddress();
+        const state = faker.location.state();
+        const city = faker.location.city();
+        const zipcode = faker.location.zipCode('#####');
+
+        await this.txtAddress.fill(address);
+        await this.txtState.fill(state);
+        await this.txtCity.fill(city);
+        await this.txtZipcode.fill(zipcode);
+
+    }
+
+    async verifyEnterAccountInfoText(expectedText: string) {
+        const actualText = await this.hdrEnterAccountInformation;
+        await expect(actualText).toHaveText(expectedText);
+        console.log('Enter Account Information text verified: ' + expectedText);
+
+    }
+
+    async clickCreateAccountButton() {
+        await this.btnSubmit.click();
+        console.log('Create Account button clicked');
+    }
+
+    async verifyAccountCreatedText(expectedText: string) {
+        const actualText = await this.txtAccountCreated;
+        await expect(actualText).toHaveText(expectedText);
+        console.log('Account Created text verified: ' + expectedText);
+    }
+    async clickContinueButton() {
+        await this.btnContinue.click();
+    }
+
+    async clickDeleteAccountLink() {
+        await this.linkDeleteAccount.click();
+        console.log('Delete Account link clicked');
+  }
+
+  async verifyAccountDeletedText(expectedText: string) {
+        const actualText = await this.txtAccountDeleted;
+        await expect(actualText).toHaveText(expectedText);
+        console.log('Account Deleted text verified: ' + expectedText);
+    }
 }
