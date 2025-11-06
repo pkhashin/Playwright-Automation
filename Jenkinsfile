@@ -20,11 +20,18 @@ pipeline {
             }
         }
 
-        stage('Generate Report') {
-            steps {
-                bat 'npx playwright show-report'
-            }
-        }
+       stage('Publish HTML Report') {
+         steps {
+        publishHTML(target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'playwright-report',
+            reportFiles: 'index.html',
+            reportName: 'Playwright Test Report'
+        ])
+    }
+}
     }
 
     post {
