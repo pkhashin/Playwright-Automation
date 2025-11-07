@@ -40,7 +40,7 @@ pipeline {
     }
 
     post {
-        sucess {
+        success {
             echo 'Tests completed successfully.'
         }
         always {
