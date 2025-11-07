@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Setup'){
+        stages {
+            stage('Checkout code') {
             steps {
                 echo "Checking out source code..."
                 git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation'
@@ -16,15 +18,17 @@ pipeline {
                 bat 'npx playwright install --with-deps'
             }
         }
+        }
+        }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 echo "Running Playwright tests..."
                 bat 'npx playwright test --reporter=html'
             }
         }
 
-       stage('Publish HTML Report') {
+       stage('Publish Report') {
          steps {
             echo "Publishing Playwright HTML report..."
         publishHTML(target: [
