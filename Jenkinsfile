@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Setup'){
         stages {
-            stage('Checkout code') {
+            stage() {
             steps {
                 echo "Checking out source code..."
                 git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation'
             }
         }
 
-        stage('Install Dependencies') {
+        stage() {
             steps {
                 echo "Installing npm dependencies..."
                 bat 'npm ci'
