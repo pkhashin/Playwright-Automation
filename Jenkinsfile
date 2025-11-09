@@ -3,16 +3,10 @@ pipeline {
 
     stages {
         stage('Setup'){
-        stages {
-            stage('Checkout code') {
             steps {
                 echo "Checking out source code..."
-                git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation.git'
-            }
-        }
+                git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation'
 
-        stage('Install Dependencies') {
-            steps {
                 echo "Installing npm dependencies..."
                 bat 'npm ci'
                 bat 'npx playwright install --with-deps'
