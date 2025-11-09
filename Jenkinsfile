@@ -38,27 +38,12 @@ pipeline {
     post {
         success {
             echo '✅ Tests completed successfully.'
-            emailext(
-                subject: "✅ Playwright Tests Passed - Build #${env.BUILD_NUMBER}",
-                body: """
-                    <p>All Playwright tests passed successfully!</p>
-                    <p><a href="${env.BUILD_URL}">View Jenkins Build Details</a></p>
-                    <p><a href="${env.BUILD_URL}HTML_20Report/">View Playwright HTML Report</a></p>
-                """,
-                to: 'pkhashin@gmail.com'
-            )
+            
         }
 
         failure {
             echo '❌ Tests failed!'
-            emailext(
-                subject: "❌ Playwright Tests Failed - Build #${env.BUILD_NUMBER}",
-                body: """
-                    <p>Some tests have failed in Playwright execution.</p>
-                    <p><a href="${env.BUILD_URL}">Check the Jenkins logs</a></p>
-                """,
-                to: 'pkhashin@gmail.com'
-            )
+        
         }
 
         always {

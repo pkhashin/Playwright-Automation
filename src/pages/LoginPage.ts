@@ -40,14 +40,14 @@ export class LoginPage {
     }
 
     async enterSignupName() {
-        const signUpName=faker.person.firstName();
+        const signUpName = faker.person.firstName();
 
         await this.signupNameInput.fill(signUpName);
         console.log('Signup name entered : ' + signUpName);
     }
 
     async enterSignupEmail() {
-        const signUpEmail=faker.internet.email();
+        const signUpEmail = faker.internet.email();
         await this.sigupEmail.fill(signUpEmail);
         console.log('Signup email entered : ' + signUpEmail);
     }
