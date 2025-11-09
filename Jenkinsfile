@@ -12,6 +12,8 @@ pipeline {
                 bat 'npx playwright install --with-deps'
             }
         }
+        }
+        }
 
         stage('Test') {
             steps {
@@ -38,9 +40,18 @@ pipeline {
     post {
         success {
             echo 'Tests completed successfully.'
+            emailext(
+              subject: "✅ Playwright Tests Passed - Build #${env.BUILD_NUMBER}",
+            body: """<p>All tests passed successfully.</p>
+                     <p><a href="${env.BUILD_URL}">View Jenkins Build</a></p>""",
+            recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+            to: 'pkhashin@gmail.com'
+        )
         }
         always {
             archiveArtifacts artifacts: '**/playwright-report/**', fingerprint: true
         }
+
+
     }
 }
