@@ -2,10 +2,12 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Setup'){
+        stages {
+            stage('Checkout code') {
             steps {
                 echo "Checking out source code..."
-                git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation'
+                git branch: 'main', url: 'https://github.com/pkhashin/Playwright-Automation.git'
             }
         }
 
@@ -16,15 +18,17 @@ pipeline {
                 bat 'npx playwright install --with-deps'
             }
         }
+        }
+        }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 echo "Running Playwright tests..."
                 bat 'npx playwright test --reporter=html'
             }
         }
 
-       stage('Publish HTML Report') {
+       stage('Publish Report') {
          steps {
             echo "Publishing Playwright HTML report..."
         publishHTML(target: [
@@ -42,9 +46,18 @@ pipeline {
     post {
         success {
             echo 'Tests completed successfully.'
+            emailext(
+              subject: "✅ Playwright Tests Passed - Build #${env.BUILD_NUMBER}",
+            body: """<p>All tests passed successfully.</p>
+                     <p><a href="${env.BUILD_URL}">View Jenkins Build</a></p>""",
+            recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+            to: 'pkhashin@gmail.com'
+        )
         }
         always {
             archiveArtifacts artifacts: '**/playwright-report/**', fingerprint: true
         }
+
+
     }
 }
